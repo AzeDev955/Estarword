@@ -6,5 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Mantenimiento extends Model
 {
-    //
+    public function nave()
+    {
+        return $this->belongsTo(Nave::class, "nave_id");
+    }
 }
