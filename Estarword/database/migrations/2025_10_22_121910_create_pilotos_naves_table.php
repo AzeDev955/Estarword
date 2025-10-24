@@ -10,13 +10,14 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('mantenimientos', function (Blueprint $table) {
+        Schema::create('pilotos_naves', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('piloto_id')->constrained('pilotos')->onDelete('cascade');
             $table->foreignId('nave_id')->constrained('naves')->onDelete('cascade');
-            $table->date('fecha');
-            $table->text('descripcion');
-            $table->decimal('coste', 10, 2);
+            $table->date('fecha_inicio');
+            $table->date('fecha_fin')->nullable();
             $table->timestamps();
+            $table->unique(['piloto_id', 'nave_id', 'fecha_inicio']);
         });
     }
 
@@ -25,6 +26,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('mantenimientos');
+        Schema::dropIfExists('pilotos_naves');
     }
 };
