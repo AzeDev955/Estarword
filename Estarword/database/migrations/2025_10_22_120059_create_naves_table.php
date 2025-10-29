@@ -17,7 +17,10 @@ return new class extends Migration {
             $table->integer('tripulacion');
             $table->integer('pasajeros');
             $table->string('clase');
-            $table->foreignId('planeta_id')->constrained('planetas')->onDelete('set null');
+            $table->foreignId('planeta_id')
+                ->nullable()
+                ->constrained('planetas')
+                ->onDelete('set null');
             $table->timestamps();
         });
     }
