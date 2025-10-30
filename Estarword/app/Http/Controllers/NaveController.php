@@ -38,7 +38,31 @@ class NaveController extends Controller
 
     }
 
-    public function show() : {
-        
+    public function show($id)
+    {
+        $nave = Nave::findOrFail($id); //asi devuelve automaticamente un error 404 si no existe el id dentro de la database
+
+        return $nave;
+    }
+
+    public function update(Request $request, Nave $nave)
+    {
+        $datosValidados = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'modelo' => 'required|string',
+            'tripulacion' => 'required|integer',
+            'pasajeros' => 'required|integer',
+            'clase' => 'required|string',
+            'planeta_id' => 'required|exists:planetas,id'
+        ]);
+
+        $nave->update($datosValidados);
+        return $nave;
+    }
+
+    public function destroy(Nave $nave)
+    {
+        $nave->delete();
+        return response()->json(null, 204);
     }
 }
