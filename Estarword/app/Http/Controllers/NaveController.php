@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Nave;
+use App\Models\Piloto;
 use Illuminate\Http\Request;
 
 class NaveController extends Controller
@@ -64,5 +65,51 @@ class NaveController extends Controller
     {
         $nave->delete();
         return response()->json(null, 204);
+    }
+
+    public function asignarPiloto(Request $request)
+    {
+        $datosValidados = $request->validate([
+            'id_piloto' => 'required|exists:pilotos,id',
+            'id_nave' => 'required|exists:naves,id'
+        ]);
+
+        $nave = Nave::find($datosValidados['id_nave']);
+        $piloto = Piloto::find($datosValidados['id_piloto']);
+        $nave->pilotos()->attach($datosValidados['id_piloto'], ['fecha_inicio' => now()]);
+
+        return response()->json([
+            'exito' => true,
+            'mensaje' => "Piloto {$piloto->id} asignado a la nave {$nave->id}"
+        ]);
+    }
+
+    public function desasignarPiloto(Request $request)
+    {
+        $datosValidados = $request->validate([
+            'id_piloto' => 'required|exists:pilotos,id',
+            'id_nave' => 'required|exists:naves,id'
+        ]);
+
+        $nave = Nave::find($datosValidados['id_nave']);
+        $piloto = Piloto::find($datosValidados['id_piloto']);
+        /*
+        mi intento
+         $resultado = $nave->pilotos()->updateExistingPivot($datosValidados['id_piloto'], ['fecha_fin' => now()]);
+        */
+        $resultado = $nave->pilotos()
+            ->wherePivotNull('fecha_fin')
+            ->updateExistingPivot($datosValidados['id_piloto'], ['fecha_fin' => now()]);
+        if ($resultado) {
+            return response()->json([
+                'exito' => true,
+                'mensaje' => "Piloto {$piloto->id} desasignado a la nave {$nave->id}"
+            ], 201);
+        }
+        return response()->json([
+            'exito' => false,
+            'mensaje' => 'Error: El piloto no tiene una asignación activa en esta nave.'
+        ], 404);
+
     }
 }
