@@ -20,7 +20,12 @@ Route::apiResource('mantenimientos', MantenimientoController::class);
 
 Route::post('/naves/asignar-piloto', [NaveController::class, 'asignarPiloto']);
 Route::post('/naves/desasignar-piloto', [NaveController::class, 'desasignarPiloto']);
-Route::get('/naves/inactivas')
+Route::get('/naves/inactivas', [NaveController::class, 'listarSinPiloto']);
+
+Route::get('/pilotos/historico', [PilotoController::class, 'listarHistorico']);
+Route::get('/pilotos/activos',[PilotoController::class, 'listarActuales']);
+
+Route::get('/mantenimientos/fechas',[MantenimientoController::class, 'listarPorFechas'])
 /*
 Route::get('/naves', [NaveController::class, 'index']);
 Route::get('/naves/{id}', [NaveController::class, 'show']);

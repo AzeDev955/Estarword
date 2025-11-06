@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Piloto;
+use App\Models\Pilotos_nave;
 use Illuminate\Http\Request;
 
 class PilotoController extends Controller
@@ -16,5 +17,24 @@ class PilotoController extends Controller
     {
         $piloto = Piloto::find($id);
         return $piloto;
+    }
+
+    public function listarHistorico()
+    {
+        $pilotosConHistorial = Piloto::has('naves')->get();
+        return $pilotosConHistorial;
+    }
+
+    public function listarActuales()
+    {
+        $pilotosActivos = Piloto::whereHas('naves', function ($query) {
+            $query->whereNull('pilotos_naves.fecha_fin');
+        })->with([
+                    'naves' => function ($query) {
+                        $query->whereNull('pilotos_naves.fecha_fin');
+                    }
+                ])->get();
+
+        return $pilotosActivos;
     }
 }

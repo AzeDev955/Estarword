@@ -112,4 +112,10 @@ class NaveController extends Controller
         ], 404);
 
     }
+
+    public function listarSinPiloto()
+    {
+        $navesSinPiloto = Nave::whereDoesntHave('pilotos')->get();
+        return response()->json($navesSinPiloto);
+    }
 }
